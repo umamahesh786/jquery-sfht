@@ -45,14 +45,15 @@ function scrollableFixedHeaderTable(widthpx, heightpx, showSelect,cookie) {
 	sfht.adjustTables($sfhtTable, $mainTable);
 	sfht.adjustHeader($sfhtHeader, $sfhtData, $mainTable);
 	
-	/* column select check boxes */
-	$parentDiv.prev().find('div:nth(0)').attr('id', mainTableId + '_columnSelectButton');
-	$parentDiv.prev().find('div:nth(1)').attr('id', mainTableId + '_columnSelect');
-	
 	if (!showSelect) {
 		$parentDiv.prev().remove();
 		return;
 	}
+	
+	/* column select check boxes */
+	$parentDiv.prev().find('div:nth(0)').attr('id', mainTableId + '_columnSelectButton');
+	$parentDiv.prev().find('div:nth(1)').attr('id', mainTableId + '_columnSelect');
+	
 	
 	sfht.loadColumnSelect($(sfht.getColumnSelect(mainTableId)), $sfhtHeader, mainTableId, $sfhtData, $mainTable, cookie);
 	
@@ -97,7 +98,7 @@ function scrollableFixedHeaderTable(widthpx, heightpx, showSelect,cookie) {
 
 sfht.loadColumnSelect = function ($container, $sfhtHeader, mainTableId, $sfhtData, $mainTable, cookie) {
 	var myInnerHtml = "<ul>";
-	$sfhtHeader.find('td').each(function(index) {
+	$sfhtHeader.find('td, th').each(function(index) {
 		myInnerHtml += '<li><input type="checkbox" class="columnCheck" checked="checked">' + $(this).text() + '</input></li>';
 	});
 	myInnerHtml += '</ul>';
@@ -127,13 +128,13 @@ sfht.loadColumnSelect = function ($container, $sfhtHeader, mainTableId, $sfhtDat
 }
 
 sfht.hideColumn = function(id, index) {
-	var $mainTable = $('#' + id);
+	var $mainTable = $('table[id=' + id + "]");
 	var $headerTable = sfht.getFixedHeader(id);
 	$mainTable.find('tr').each(function() {
-		$(this).find('td:nth(' + index + ')').hide();
+		$($(this).find('td,th')[index]).hide();
 	});
 	$headerTable.find('tr').each(function() {
-		$(this).find('td:nth(' + index + ')').hide();
+		$($(this).find('td,th')[index]).hide();
 	});
 	var jqKey = sfht.getSfhtVar(id);
 	var lastWidth = sfht[jqKey]['lastWidth'];
@@ -145,13 +146,13 @@ sfht.hideColumn = function(id, index) {
 }
 
 sfht.showColumn = function (id, index) {
-	var $mainTable = $('#' + id);
+	var $mainTable = $('table[id=' + id + "]");
 	var $headerTable = sfht.getFixedHeader(id);
 	$mainTable.find('tr').each(function() {
-		$(this).find('td:nth(' + index + ')').show();
+		$($(this).find('td,th')[index]).show();
 	});
 	$headerTable.find('tr').each(function() {
-		$(this).find('td:nth(' + index + ')').show();
+		$($(this).find('td,th')[index]).show();
 	});
 	var jqKey = sfht.getSfhtVar(id);
 	var lastWidth = sfht[jqKey]['lastWidth'];
@@ -187,10 +188,9 @@ sfht.adjustTables = function($sfhtTable, $mainTable) {
 	var totalWidth = 0; 
 	var idAdjWidth = sfht.getSfhtVar($mainTable.attr('id'));	
 	
-	var id = '#' + $mainTable.attr('id'); // IE compatibility 
-	var queryStr = id + ' tr:nth(0) td';
-	
-	$(queryStr).each(function(index) {
+	var id = $mainTable.attr('id');
+	var idPrefix = 'table[id=' + id + '] tr:nth(0)';
+	$(idPrefix).find('td, th').each(function(index) {
 		var $this = $(this);
 		var actualWidth = parseInt($this.width());
 		var attrWidth = parseInt($this.attr('width'));
@@ -198,7 +198,7 @@ sfht.adjustTables = function($sfhtTable, $mainTable) {
 		totalWidth += plusWidth;
 		tdWidthArr[index] = plusWidth;
 		$this.width(plusWidth);
-		$sfhtTable.find('td:nth(' + index + ')').width(plusWidth);
+		$sfhtTable.find('td:nth(' + index + '), th:nth(' + index + ')').width(plusWidth);
 	});
 	
 	adjTableWidth = totalWidth;
@@ -214,15 +214,16 @@ sfht.getSfhtVar = function(id) {
 }
 
 sfht.getSelectButton = function(id) {
-	return($('#' + id + '_columnSelectButton'));
+	return($('div[id=' + id + '_columnSelectButton]'));
 }
 
 sfht.getColumnSelect = function(id) {
-	return($('#' + id + '_columnSelect'));
+	var selector = '';
+	return($('div[id=' + id + '_columnSelect]'));
 }
 
 sfht.getFixedHeader = function(id) {
-	return ($('#' + id + '_header'));
+	return ($('table[id=' + id + '_header]'));
 }
 
 sfht.fillState = function (i) {
@@ -240,3 +241,4 @@ function replaceOneChar(s,c,n){
 	var re = new RegExp('^(.{'+ --n +'}).(.*)$','');
 	return s.replace(re,'$1'+c+'$2');
 };
+
