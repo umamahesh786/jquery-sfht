@@ -7,10 +7,10 @@
 .sfhtTable {
 	border: 1px solid #CCCCCC;
 }
-.sfhtTable table tr, .sfhtTable tr td {
+/*.sfhtTable table tr, .sfhtTable tr td {
 	padding: 0;
 	margin: 0;
-}
+}*/
 .sfhtHeader {
 	position: absolute;
 	overflow: hidden;
