@@ -131,9 +131,11 @@ sfht.hideColumn = function(id, index) {
 	var $mainTable = $('table[id=' + id + "]");
 	var $headerTable = sfht.getFixedHeader(id);
 	$mainTable.find('tr').each(function() {
+		//$(this).find('td:nth(' + index + ')').hide();
 		$($(this).find('td,th')[index]).hide();
 	});
 	$headerTable.find('tr').each(function() {
+		//$(this).find('td:nth(' + index + ')').hide();
 		$($(this).find('td,th')[index]).hide();
 	});
 	var jqKey = sfht.getSfhtVar(id);
@@ -149,9 +151,11 @@ sfht.showColumn = function (id, index) {
 	var $mainTable = $('table[id=' + id + "]");
 	var $headerTable = sfht.getFixedHeader(id);
 	$mainTable.find('tr').each(function() {
+		//$(this).find('td:nth(' + index + ')').show();
 		$($(this).find('td,th')[index]).show();
 	});
 	$headerTable.find('tr').each(function() {
+		//$(this).find('td:nth(' + index + ')').show();
 		$($(this).find('td,th')[index]).show();
 	});
 	var jqKey = sfht.getSfhtVar(id);
@@ -188,7 +192,9 @@ sfht.adjustTables = function($sfhtTable, $mainTable) {
 	var totalWidth = 0; 
 	var idAdjWidth = sfht.getSfhtVar($mainTable.attr('id'));	
 	
+	//var id = '#' + $mainTable.attr('id'); // IE compatibility 
 	var id = $mainTable.attr('id');
+	//var queryStr = id + ' tr:nth(0) td';
 	var idPrefix = 'table[id=' + id + '] tr:nth(0)';
 	$(idPrefix).find('td, th').each(function(index) {
 		var $this = $(this);
@@ -202,8 +208,8 @@ sfht.adjustTables = function($sfhtTable, $mainTable) {
 	});
 	
 	adjTableWidth = totalWidth;
-	$sfhtTable.width(totalWidth);
-	$mainTable.width(totalWidth);
+	// $sfhtTable.width(totalWidth);
+	// $mainTable.width(totalWidth);
 	
 	/* Register this variable to sfht globals */
 	sfht[idAdjWidth] = {'lastWidth': adjTableWidth, 'tdWidths': tdWidthArr};
@@ -241,4 +247,3 @@ function replaceOneChar(s,c,n){
 	var re = new RegExp('^(.{'+ --n +'}).(.*)$','');
 	return s.replace(re,'$1'+c+'$2');
 };
-
