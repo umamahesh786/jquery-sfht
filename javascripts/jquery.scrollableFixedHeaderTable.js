@@ -74,7 +74,7 @@ function scrollableFixedHeaderTable(widthpx, heightpx, showSelect,cookie) {
 	if (cookie == null || cookie == '') {
 		return;
 	}
-	var cSize = $sfhtHeader.find('td').length;
+	var cSize = $sfhtHeader.find('td, th').length;
 	if (cSize == 0) {
 		return;
 	}
@@ -172,10 +172,10 @@ sfht.adjustHeader = function($sfhtHeader, $sfhtData, $mainTable) {
 	var containerInnerWidth = $sfhtData.innerWidth();
 	var scrollBarSize = containerWidth - containerInnerWidth;
 	var dataTableWidth = $mainTable.width();
-	
+
 	if (!($.browser.mozilla || $.browser.msie || $.browser.opera)) {
 		containerInnerWidth = dataTableWidth >= containerWidth ? containerWidth - 17 : containerWidth;
-	} 
+	}
 
 	if (dataTableWidth >= containerInnerWidth) {
 		$sfhtHeader.width(containerInnerWidth);
@@ -189,10 +189,10 @@ sfht.adjustTables = function($sfhtTable, $mainTable) {
 	var tdWidthArr = new Array();
 	var adjTableWidth = 0;
 
-	var totalWidth = 0; 
-	var idAdjWidth = sfht.getSfhtVar($mainTable.attr('id'));	
-	
-	//var id = '#' + $mainTable.attr('id'); // IE compatibility 
+	var totalWidth = 0;
+	var idAdjWidth = sfht.getSfhtVar($mainTable.attr('id'));
+
+	//var id = '#' + $mainTable.attr('id'); // IE compatibility
 	var id = $mainTable.attr('id');
 	//var queryStr = id + ' tr:nth(0) td';
 	var idPrefix = 'table[id=' + id + '] tr:nth(0)';
