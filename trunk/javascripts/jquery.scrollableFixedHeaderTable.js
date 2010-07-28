@@ -11,26 +11,21 @@ function scrollableFixedHeaderTable(widthpx, heightpx, showSelect,cookie) {
 	
 	$this.wrap('<div style="text-align: left"></div>');
 	$this.parent().before('<div class="noDivBounds"><div class="sfhtColumnSelectButton_unPressed" title="Select Columns"></div><div class="sfhtColumnSelect"></div></div>')
-	
+
 	var $parentDiv = $this.parent();
-	var $clone = $parentDiv.clone();
-	
-	$clone.find('tr:gt(0)').remove();
-	
-	var $fixedHeaderHtml = $clone.html();
+	var $fixedHeaderHtml = sfht.cloneHeader($parentDiv);
 	var $srcTableHtml = $parentDiv.html();
-	
+
 	$this.before('<table cellspacing="0" cellpadding="0" class="sfhtTable"><tr><td><div class="sfhtHeader"></div></td></tr><tr><td><div class="sfhtData"></div></td></tr></table>');
 	$parentDiv.find('div:nth(0)').html($fixedHeaderHtml);
 	$parentDiv.find('div:nth(1)').html($srcTableHtml);
-	
+
 	var headerId = $this.attr('id') + '_header';
 	var $sfhtHeader = $parentDiv.find('.sfhtHeader');
 	var $sfhtTable = $sfhtHeader.find('table').attr('id', headerId);
-	
+
 	$this.remove();
-	$clone.remove();
-	
+
 	var $sfhtData = $parentDiv.find('.sfhtData');
 	$sfhtData.height(heightpx).width(widthpx);
 	var $mainTable = $sfhtData.find('table');
@@ -243,7 +238,37 @@ sfht.fillState = function (i) {
 	return state ;
 }
 
+sfht.loadAttributes = function(dest, source) {
+	attributes = $(source).listAttributes();
+
+	$(attributes).each(function(){
+		var at = "" + this;
+		$(dest).attr(at, $(source).attr(at));
+	});
+}
+
+sfht.cloneHeader = function(parentDiv) {
+	if (jQuery.fn.listAttributes) {
+	  var $container = $("<div><table><thead><tr></tr></thead></table></div>");
+		var $clone = $container.find('table:eq(0)');
+		var tableNode = $(parentDiv).children(0);
+		sfht.loadAttributes($clone,tableNode);
+	
+		var $rowHeaderNode = $(tableNode).find('tr:eq(0)');
+		var $cloneRow = $clone.find('tr:eq(0)');
+		sfht.loadAttributes($cloneRow,$rowHeaderNode);
+		$cloneRow.html($rowHeaderNode.html());
+	
+	  return $container.html();
+	} else {
+		$clone = $(parentDiv).clone();
+		$clone.find('tr:gt(0)').remove();
+		return $clone.html();
+	}
+}
+
 function replaceOneChar(s,c,n){
 	var re = new RegExp('^(.{'+ --n +'}).(.*)$','');
 	return s.replace(re,'$1'+c+'$2');
 };
+
