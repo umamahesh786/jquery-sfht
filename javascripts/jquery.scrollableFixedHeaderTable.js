@@ -262,7 +262,7 @@ sfht.cloneHeader = function(parentDiv) {
 	  return $container.html();
 	} else {
 		$clone = $(parentDiv).clone();
-		$clone.find('tr:gt(0)').remove();
+		$clone.children().first().find('theader, tbody').first().children('tr:gt(0)').remove();
 		return $clone.html();
 	}
 }
