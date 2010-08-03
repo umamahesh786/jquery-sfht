@@ -239,21 +239,19 @@ sfht.fillState = function (i) {
 }
 
 sfht.loadAttributes = function(dest, source) {
-	attributes = $(source).listAttributes();
-
+	var attributes = $(source).listAttrs();
 	$(attributes).each(function(){
-		var at = "" + this;
+		var at = this + '';
 		$(dest).attr(at, $(source).attr(at));
 	});
 }
 
 sfht.cloneHeader = function(parentDiv) {
-	if (jQuery.fn.listAttributes) {
+	if (jQuery.fn.listAttrs) {
 	  var $container = $("<div><table><thead><tr></tr></thead></table></div>");
 		var $clone = $container.find('table:eq(0)');
 		var tableNode = $(parentDiv).children(0);
 		sfht.loadAttributes($clone,tableNode);
-	
 		var $rowHeaderNode = $(tableNode).find('tr:eq(0)');
 		var $cloneRow = $clone.find('tr:eq(0)');
 		sfht.loadAttributes($cloneRow,$rowHeaderNode);
