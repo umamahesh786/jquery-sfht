@@ -3,17 +3,20 @@
 jQuery.fn.scrollableFixedHeaderTable = scrollableFixedHeaderTable;
 
 sfht = {};
-function scrollableFixedHeaderTable(widthpx, heightpx, showSelect,cookie) {
+function scrollableFixedHeaderTable(widthpx, heightpx, showSelect, cookie, headerRowSize) {
 	/* table initialization */
 	if (!$(this).hasClass('scrollableFixedHeaderTable'))
 		return;
 	var $this = $(this);
-	
+
 	$this.wrap('<div style="text-align: left"></div>');
 	$this.parent().before('<div class="noDivBounds"><div class="sfhtColumnSelectButton_unPressed" title="Select Columns"></div><div class="sfhtColumnSelect"></div></div>')
 
+ 	headerRowSize = headerRowSize ? headerRowSize - 1: 0;
+	headerRowSize = Math.floor(headerRowSize < 0 ? 0 : isNaN(headerRowSize) ? 0 : headerRowSize) ;
+
 	var $parentDiv = $this.parent();
-	var $fixedHeaderHtml = sfht.cloneHeader($parentDiv);
+	var $fixedHeaderHtml = sfht.cloneHeader($parentDiv, headerRowSize);
 	var $srcTableHtml = $parentDiv.html();
 
 	$this.before('<table cellspacing="0" cellpadding="0" class="sfhtTable"><tr><td><div class="sfhtHeader"></div></td></tr><tr><td><div class="sfhtData"></div></td></tr></table>');
@@ -37,9 +40,9 @@ function scrollableFixedHeaderTable(widthpx, heightpx, showSelect,cookie) {
 	});
 	
 	/* adjustments */
-	sfht.adjustTables($sfhtTable, $mainTable);
-	sfht.adjustHeader($sfhtHeader, $sfhtData, $mainTable);
-	
+	sfht.adjustTables($sfhtTable, $mainTable, headerRowSize);
+	sfht.adjustHeader($sfhtHeader, $sfhtData, $mainTable, headerRowSize);
+
 	if (!showSelect) {
 		$parentDiv.prev().remove();
 		return;
@@ -180,7 +183,7 @@ sfht.adjustHeader = function($sfhtHeader, $sfhtData, $mainTable) {
 }
 
 
-sfht.adjustTables = function($sfhtTable, $mainTable) {
+sfht.adjustTables = function($sfhtTable, $mainTable, headerRowSize) {
 	var tdWidthArr = new Array();
 	var adjTableWidth = 0;
 
@@ -190,7 +193,7 @@ sfht.adjustTables = function($sfhtTable, $mainTable) {
 	//var id = '#' + $mainTable.attr('id'); // IE compatibility
 	var id = $mainTable.attr('id');
 	//var queryStr = id + ' tr:nth(0) td';
-	var idPrefix = 'table[id=' + id + '] tr:nth(0)';
+	var idPrefix = 'table[id=' + id + '] tr:lt(' + (headerRowSize + 1) + ')';
 	$(idPrefix).find('td, th').each(function(index) {
 		var $this = $(this);
 		var actualWidth = parseInt($this.width());
@@ -246,22 +249,28 @@ sfht.loadAttributes = function(dest, source) {
 	});
 }
 
-sfht.cloneHeader = function(parentDiv) {
+sfht.cloneHeader = function(parentDiv, headerRowSize) {
+	var rowIndex = headerRowSize;
 	if (jQuery.fn.listAttrs) {
-	  var $container = $("<div><table><thead><tr></tr></thead></table></div>");
+	  var $container = $("<div><table><thead></thead></table></div>");
 		var $clone = $container.find('table:eq(0)');
-		var tableNode = $(parentDiv).children(0);
+		var tableNode = $(parentDiv).children().first();
 		sfht.loadAttributes($clone,tableNode);
-		var $rowHeaderNode = $(tableNode).find('tr:eq(0)');
-		var $cloneRow = $clone.find('tr:eq(0)');
-		sfht.loadAttributes($cloneRow,$rowHeaderNode);
-		$cloneRow.html($rowHeaderNode.html());
-	
+		sfht.loadAttributes($clone.children().first(),tableNode.children().first());
+
+		var $thead = $clone.find('thead');
+		for (var _i = 0; _i <= rowIndex; _i++) {
+			var $rowHeaderNode = tableNode.children().first().children(':nth(' + _i + ')');
+			var $cloneRow = $('<tr></tr>');
+			sfht.loadAttributes($cloneRow,$rowHeaderNode);
+			$cloneRow.html($rowHeaderNode.html());
+			$cloneRow.appendTo($thead);
+		}
 	  return $container.html();
 	} else {
-		$clone = $(parentDiv).clone();
-		$clone.children().first().find('theader, tbody').first().children('tr:gt(0)').remove();
-		return $clone.html();
+		var $cloned = $(parentDiv).clone();
+		$cloned.children().first().children().children('tr:gt(' + headerRowSize + ')').remove();
+		return $cloned.html();
 	}
 }
 
