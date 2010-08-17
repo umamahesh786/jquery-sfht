@@ -8,6 +8,8 @@ function scrollableFixedHeaderTable(widthpx, heightpx, showSelect, cookie, heade
 	if (!$(this).hasClass('scrollableFixedHeaderTable'))
 		return;
 	var $this = $(this);
+	/* fix width for tables witout width attribute */
+	$this.attr('width', $this.width());
 
 	$this.wrap('<div style="text-align: left"></div>');
 	$this.parent().before('<div class="noDivBounds"><div class="sfhtColumnSelectButton_unPressed" title="Select Columns"></div><div class="sfhtColumnSelect"></div></div>')
